@@ -1,26 +1,61 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import {
+  BrowserRouter as Router, 
+  Route, 
+  Switch,
+  Link
+} from 'react-router-dom';
+import SigninPage from './SigninPage.js';
+import SignupPage from './SignupPage.js';
+import TodoList from './TodoList.js';
+import PrivateRoute from './PrivateRoute.js';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+
+export default class App extends Component {
+  state = { token: localStorage.getItem('TOKEN') }
+
+  handleTokenChange = (specialToken) => {
+    this.setState({ token: specialToken });
+    localStorage.setItem('TOKEN', specialToken)
+  }
+
+
+  render() {
+    return (
+
+
+      <div>
+        <Router>
+          <ul>
+            { this.state.token && <div>Welcome To Your List</div> }
+            { this.state.token && <Link to="/api/todo"><h1>To Do List</h1></Link> }
+                <Link to="/api/auth/signin"><h1>Sign In</h1></Link>
+                <Link to="/api/auth/signup"><h1>Sign Up</h1></Link>
+                  <button onClick={() => this.handleTokenChange('')}>LogOut</button>
+            </ul>
+          <Switch>
+            <Route
+            path="/api/auth/signup"
+            exact
+            render={(routerProps) => <SignupPage {...routerProps} />}
+            />
+             <Route
+            path="/api/auth/signin"
+            exact
+            render={(routerProps) => <SigninPage {...routerProps} />}
+            />
+            />
+            <PrivateRoute
+            path="/api/todo"
+            token={this.state.token}
+            exact
+            render={(routerProps) => <TodoList {...routerProps} />}
+            />
+          </Switch>
+        </Router>
+        
+      </div>
+    )
+  }
 }
-
-export default App;
