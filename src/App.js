@@ -47,7 +47,7 @@ export default class App extends Component {
             />
             />
             <PrivateRoute
-            path="/api/todo"
+            path="/todo"
             token={this.state.token}
             exact
             render={(routerProps) => <TodoList {...routerProps} />}
